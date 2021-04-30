@@ -1,0 +1,8 @@
+---
+galaxy_info:
+  author: mbfx
+  description: mysql db provisoon
+  galaxy_tags: [mysql, db]
+
+dependencies: []
+...

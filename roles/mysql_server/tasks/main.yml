@@ -1,0 +1,17 @@
+---
+- name: Install mysql repo
+  yum:
+    name: "https://repo.percona.com/yum/percona-release-latest.noarch.rpm"
+    state: present
+
+- name: Install Percona-Server
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - Percona-Server-server-57
+    - MySQL-python
+    - mysql
+    
+...

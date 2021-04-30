@@ -1,0 +1,19 @@
+---
+ntp_timezone: Asia/Almaty 
+domain: mydomain.test
+master_ip: 192.168.11.150
+master_hostname: master
+slave_ip: 192.168.11.151
+slave_hostname: slave
+db_name: bet
+db_dmp_name: bet.dmp
+path_to_dumpfile: /vagrant
+mysql_user_name: vagrant
+mysql_user_password: 12qwasZX!@
+mysql_user_home: /home/vagrant
+mysql_root_username: root
+mysql_root_password: 12qwasZX!@zx
+mysql_root_home: /root
+mysql_replication_user: repl
+mysql_replication_user_password: 12qwasZX!@qw
+...

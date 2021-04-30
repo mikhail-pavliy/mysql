@@ -1,0 +1,22 @@
+---
+- name: mysql 
+  hosts: master
+  become: true
+  gather_facts: yes
+  tags:
+    - mysql
+
+  roles:
+    - mysql_master
+    - db_provision
+
+- name: mysql
+  hosts: slave
+  become: true
+  gather_facts: yes
+  tags:
+    - mysql
+
+  roles:
+    - mysql_slave
+...
