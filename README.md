@@ -11,11 +11,11 @@
 пример в логе изменения строки и появления строки на реплике
 
 
-В реpультате работ был подготволен vagrant файл, который запускает 2 вертуланые машины. и С помощью ansible конфигурируються до нужной нам схемы. 
+В реpультате работ был подготволен ```vagrant``` файл, который запускает 2 вертуланые машины. и С помощью ```ansible``` конфигурируються до нужной нам схемы. 
 
 # Проверка
 
-На мастер сервере проверим server-id
+На ```master``` сервере проверим ```server-id```:
 
 ```ruby
 mysql> SELECT @@server_id;
@@ -26,7 +26,7 @@ mysql> SELECT @@server_id;
 +-------------+
 1 row in set (0.00 sec)
 ```
- то же самое проверим на slave
+ то же самое проверим на ```slave```:
  ```ruby
  mysql> SELECT @@server_id;
 +-------------+
@@ -36,7 +36,7 @@ mysql> SELECT @@server_id;
 +-------------+
 1 row in set (0.00 sec)
 ```
-Убеждаемся что GTID включен:
+Убеждаемся что ```GTID``` включен:
 ```ruby
 mysql> SHOW VARIABLES LIKE 'gtid_mode';
 +---------------+-------+
@@ -46,7 +46,7 @@ mysql> SHOW VARIABLES LIKE 'gtid_mode';
 +---------------+-------+
 1 row in set (0.00 sec)
 ```
-проверим нашу базу зайдем на master
+проверим нашу базу зайдем на ```master```:
 ``` ruby
 mysql> use bet
 mysql> show tables;
@@ -72,7 +72,7 @@ mysql> SELECT user,host FROM mysql.user where user='repl';
 +------+------+
 1 row in set (0.00 sec)
 ```
-проверим нашу базу зайдем на slave
+проверим нашу базу зайдем на ```slave```:
 ```ruby
 [root@slave vagrant]# mysql
 
@@ -102,7 +102,7 @@ mysql> show tables
 +---------------+
 5 rows in set (0.00 sec) 
 ```
-Вывод команды SHOW SLAVE STATUS\G на slave (здесь видно, что работает GTID-репликация):
+Вывод команды ```SHOW SLAVE STATUS\G``` на slave (здесь видно, что работает GTID-репликация):
 ```ruby
 mysql> SHOW SLAVE STATUS\G
 *************************** 1. row ***************************
@@ -122,6 +122,40 @@ mysql> SHOW SLAVE STATUS\G
             Retrieved_Gtid_Set: 82881bcd-a9b2-11eb-a4ed-5254004d77d3:1-44
             Executed_Gtid_Set: 82881bcd-a9b2-11eb-a4ed-5254004d77d3:1-44
  ```
- 
-      
- 
+ Проверим репликацию в действии. На ```master```:
+ ```ruby
+mysql> use bet
+mysql> INSERT INTO bookmaker (id,bookmaker_name) VALUES(1,'1xbet');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM bookmaker;
++----+----------------+
+| id | bookmaker_name |
++----+----------------+
+|  1 | 1xbet          |
+|  4 | betway         |
+|  5 | bwin           |
+|  6 | ladbrokes      |
+|  3 | unibet         |
++----+----------------+
+5 rows in set (0.00 sec)
+```
+Зайдем на ```slave``` и проверим, что получилось:
+```ruby
+mysql> SELECT * FROM bookmaker;
++----+----------------+
+| id | bookmaker_name |
++----+----------------+
+|  1 | 1xbet          |
+|  4 | betway         |
+|  5 | bwin           |
+|  6 | ladbrokes      |
+|  3 | unibet         |
++----+----------------+
+5 rows in set (0.00 sec)
+```
+В binlog-ах на cлейве также видно последнее изменение, туда же он пишет информацию о
+GTID :     
+```ruby
+betINSERT INTO bookmaker (id,bookmaker_name) VALUES(1,'1xbet')
+```
